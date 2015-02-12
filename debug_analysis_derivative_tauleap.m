@@ -1,5 +1,9 @@
 %analysis_data_generation_Gillespie
 %
+% This code computes the sensitivity of the model Anderson CFD using 
+% Girsanov's method.  This is a Debug version and only compute the
+% sensitivity with respect to the mean of the second coordinate. 
+%
 %Input
 %
 % int init[num_species,1] :initial value
@@ -10,7 +14,8 @@
 %
 %Output
 %
-% snapshots
+% debug_derivative : deriv X_2(timesample)   num_parameters * num_slices
+%                                            matrix
 %
 %
 %
@@ -55,9 +60,9 @@ function debug_derivative = analysis_derivative_tauleap(init, theta, tend, ...
     energy = zeros(1, num_slices);  
     deriv_mean = NaN; 
 
-    debug_x2_copy = zeros(N, num_parameters);
-    debug_dEP_2 = zeros(N, num_parameters); 
-    debug_derivative = zeros(num_parameters, num_slices);
+%    debug_x2_copy = zeros(N, num_parameters);
+%    debug_dEP_2 = zeros(N, num_parameters); 
+%    debug_derivative = zeros(num_parameters, num_slices);
     
     %Monte Carlo Simulation 
     for(h = 1:(num_leaps+1)) 

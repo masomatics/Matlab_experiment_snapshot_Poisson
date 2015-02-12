@@ -11,7 +11,7 @@ rnsource2 = rand(N,max_num_jumps);
 tend = 31;
 
 
-snapshots = analysis_data_generation_Gillespie(init, theta, tend, ...
+snapshots = debug_analysis_data_generation_Gillespie(init, theta, tend, ...
     timesample, rnsource1, rnsource2, N);
 
 mean(snapshots,2)
@@ -21,6 +21,6 @@ mean(snapshots,2)
 tic,
 N = 10000;
 deriv = debug_analysis_derivative_tauleap(init, theta, 30, ...
-    0.01, timesample, snapshots, N)
+    0.1, timesample, snapshots, N)
 
 toc
