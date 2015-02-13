@@ -20,7 +20,7 @@
 %
 %
 
-function debug_derivative = analysis_derivative_tauleap(init, theta, tend, ...
+function [meandat, debug_derivative] = analysis_derivative_tauleap(init, theta, tend, ...
     deltat, timesample, snapshots, N)
 
     include= [];
@@ -65,7 +65,7 @@ function debug_derivative = analysis_derivative_tauleap(init, theta, tend, ...
 %    debug_derivative = zeros(num_parameters, num_slices);
     
     %Monte Carlo Simulation 
-    for(h = 1:(num_leaps+1)) 
+    for(h = 1:(num_leaps)) 
         rxn_rate = compute_rate(dat_now, theta); 
         rxn_cnt = poissrnd(rxn_rate*deltat);
         dat_now = dat_now + rxn_matrix * rxn_cnt;
@@ -82,16 +82,17 @@ function debug_derivative = analysis_derivative_tauleap(init, theta, tend, ...
         
         deriv_loglike = deriv_loglike + ...
             (rxn_cnt - deltat * rxn_rate).*repmat(1./theta',[1,N]);
-        
+        time_now = time_now + deltat;
         if(abs(time_now - timesample(slice_index))< deltat/10)
              time_now
              debug_dEP_2 = dat_now(2,:) * deriv_loglike'/N;
              debug_derivative(:,slice_index) = debug_dEP_2';
+             
+             meandat(:,slice_index) = mean(dat_now, 2);             
              slice_index = slice_index  + 1;
-             mean(dat_now, 2)
+
         end 
         
-        time_now = time_now + deltat;
 
     end 
 

@@ -29,7 +29,6 @@ function snapshots = analysis_data_generation_Gillespie(init, theta, tend, ...
     num_species = length(init);
     
     %Initialization 
-    slice_index = 1;
     t_sub0 = 0;
     init_now = repmat(init, [1,N]);
     %Target variables
@@ -39,6 +38,7 @@ function snapshots = analysis_data_generation_Gillespie(init, theta, tend, ...
     for(slice_index = 1 : num_slices) 
 
         t_subtend = timesample(slice_index);
+
         for(j = 1:N)
             snapshots(:,j,slice_index) = singlepath(init_now(:,j), theta,...
                                 (t_subtend- t_sub0),rnsource1(j,:), rnsource2(j,:));
@@ -75,13 +75,13 @@ for(t = 1:max_num_jumps)
     %Compute rate and generate the necessary random variables
     [cumrate, rate] = compute_rate(dat_now, theta);
     rxn_choice = 1 + sum(cumrate < (rnsource1(rand_index)*sum(rate))); 
-    deltat = -log(rnsource2(rand_index))/cumrate(end);
+    deltat = -log(rnsource2(rand_index))/sum(rate);
+    time_now = deltat + time_now;
     if(time_now >t_subend)
         break;
     end 
     %Update the  datmat, random index, and time
     dat_now = dat_now + rxn_matrix(:,rxn_choice);
-    time_now = deltat + time_now;
     rand_index = rand_index +1;
        
 
