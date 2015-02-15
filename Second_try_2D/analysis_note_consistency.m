@@ -3,7 +3,7 @@
 init = [0;0];
 theta = [2 10 0.6, 0.2];
 %timesample = [5, 10, 12, 15];
-timesample=[4, 5,7,10];
+timesample=[3, 5,7,10];
 tend = timesample(end);
 %% First two part checks if the snapshot are indeed appropriate. 
 tic,
@@ -38,7 +38,7 @@ for plotframe = 1:length(timesample)
 end
 
 %%
-close all;
+%close all;
 tic,
 N = 10000;
 deltat = 0.1;
@@ -52,11 +52,24 @@ Gillespie_mean =squeeze(mean(snapshots,2))
 euler_mean
 
 %% Try taking derivative.  sigW = [a,b,c] must be chosen appropriately.
-N = 5000;
+N = 3;
 sigW = [0.5;2] ;
 tic,
 [deriv, energy] =analysis_snap_deriv_tauleap(init, theta, tend, ...
     deltat, sigW, timesample, snapshots, N)
 toc
 
+theta_now = rand(1,4)
+
+tic,
+[deriv_now, energy_now] =analysis_snap_deriv_tauleap(init, theta_now, tend, ...
+    deltat, sigW, timesample, snapshots, N)
+toc
+
+[euler_mean_now, deriv] = analysis_derivative_tauleap(init, theta_now, tend, ...
+    deltat, timesample, snapshots, N);
+
+%% KL 
+[deriv_now_KL, energy_now_KL] =analysis_snap_deriv_tauleapKL(init, theta, tend, ...
+    deltat, sigW, timesample, snapshots, N); 
 

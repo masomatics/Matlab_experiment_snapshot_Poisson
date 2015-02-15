@@ -28,7 +28,7 @@
 %
 %
 
-function [derivative, energy] = analysis_snap_deriv_tauleap(init, theta, tend, ...
+function [derivative, energy] = analysis_snap_deriv_tauleapKL(init, theta, tend, ...
     deltat, sigW, timesample, snapshots, N)
 
    % include= [];
@@ -48,12 +48,13 @@ function [derivative, energy] = analysis_snap_deriv_tauleap(init, theta, tend, .
     tilde_p_ymk = zeros(num_particles);
     p_ymkj = zeros(num_particles, N);
     dp_jr = zeros(N,num_particles);
-    dEP_kr= zeros(num_particles,num_parameters);     
+    dEP_kr= zeros(num_particles, num_parameters);     
     
     
     %Temporary variables    
     ycopy = zeros(num_species, num_particles, N); 
-    xcopy = zeros(num_species, num_particles, N);    
+    xcopy = zeros(num_species, num_particles, N);   
+    pcopy = zeros(N, num_particles);
     scale_p_ymkj = zeros(1,N) ;
     scale_p_ymkj_mat = zeros(num_particles,N);
     rxn_rate = zeros(num_parameters, N);
@@ -83,13 +84,14 @@ function [derivative, energy] = analysis_snap_deriv_tauleap(init, theta, tend, .
         rxn_cnt = poissrnd(rxn_rate*deltat);
         dat_now = dat_now + rxn_matrix * rxn_cnt;
         dat_now = max(dat_now, 0);
-               
+
         %compute DP,  N * num_parameters
         deriv_loglike = deriv_loglike + ...
             (rxn_cnt - deltat * rxn_rate).*repmat(1./theta',[1,N]);
         time_now = time_now + deltat;
         if(abs(time_now - timesample(slice_index))< deltat/10)
             
+
  %           includeon = 1;
             %derivative to be stored for this snapshot. 
             derivative_now = zeros(1,num_parameters);  
@@ -111,17 +113,13 @@ function [derivative, energy] = analysis_snap_deriv_tauleap(init, theta, tend, .
              p_ymkj = p_ymkj .* scale_p_ymkj_mat;
              tilde_p_ymk = mean(p_ymkj,2);
              
-
+             
+             pcopy = repmat(tilde_p_ymk, [1,num_parameters]);
              dEP_kr = 1/N *p_ymkj * deriv_loglike' ;
-             derivative_now =  sign(tilde_p_ymk - ...
-                compress_snap_wgts(:,slice_index))' * (dEP_kr); 
+             derivative_now = compress_snap_wgts(:,slice_index)' * (dEP_kr./pcopy);
             
             
-             if(min(distance_pair) == 300)
-                 energy(slice_index) = energy(slice_index) + 50; %WAY TOO FAR
-             else 
-                 energy(slice_index) = energy(slice_index) + sum(abs(tilde_p_ymk -compress_snap_wgts(:,slice_index)));
-             end
+            energy(slice_index) = energy(slice_index) + sum(abs(tilde_p_ymk -compress_snap_wgts(:,slice_index)));
             %Check if the gradient is any meaningful (tilde p is not uniform) 
             % includeon = includeon *(min(distance_pair(:)) < 300);
                          
@@ -139,6 +137,7 @@ function [derivative, energy] = analysis_snap_deriv_tauleap(init, theta, tend, .
     end % end of Tauleap loop 
       %  derivative = sum(derivative_alltime(:,include),2);
  derivative = sum(derivative_alltime,2);
+ 
 end %End of the main function
 
 %takes in the current state x and returns the rate at the point 
