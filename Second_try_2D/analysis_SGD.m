@@ -2,12 +2,13 @@ analysis_note_consistency
 %%
 N = 5000
 theta_now = rand(1,4);
+%%
 %theta_now(2) = 6;
 %theta_now = [1.0257      6.1349           0           0]
 %theta_now = [1.2538    6.5528         0.0001         0.0001];
 %theta_now = [2, 10, 0.0001,0.0001];
 
-num_iter = 20000;
+num_iter = 11000;
 energyhistory = zeros(1, num_iter);
 thetahistory = zeros(num_iter, length(theta_now));
 thetahistory(1,:) = theta_now;
@@ -32,7 +33,9 @@ for k = 1: num_iter
         eta = 0.0005;
     end
     
-    if(sum(energy) < 1)
+%    if(sum(energy) < 1)
+            if(sum(energy) < 0.33)
+
         eta = 0.0001;
     end
     

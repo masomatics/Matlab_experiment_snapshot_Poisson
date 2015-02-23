@@ -3,7 +3,8 @@
 init = [0;0];
 theta = [2 10 0.6, 0.2];
 %timesample = [5, 10, 12, 15];
-timesample=[3, 5,7,10];
+%timesample=[3, 5,7,10];
+timesample = [3,8];
 tend = timesample(end);
 %% First two part checks if the snapshot are indeed appropriate. 
 tic,
