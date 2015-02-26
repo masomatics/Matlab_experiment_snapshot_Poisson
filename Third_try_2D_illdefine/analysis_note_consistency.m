@@ -1,9 +1,9 @@
 
 %%
 init = [0;0];
-theta = [2 10 0.6, 0.2];
-%timesample = [5, 10, 12, 15];
-%timesample=[3, 5,7,10];
+theta = [2 10 0.6, 0.2,0];
+num_parameters = length(theta);
+
 timesample = [5];
 tend = timesample(end);
 %% First two part checks if the snapshot are indeed appropriate. 
@@ -60,7 +60,7 @@ tic,
     deltat, sigW, timesample, snapshots, N)
 toc
 
-theta_now = rand(1,4)
+theta_now = rand(1,num_parameters)
 
 tic,
 [deriv_now, energy_now] =analysis_snap_deriv_tauleap(init, theta_now, tend, ...

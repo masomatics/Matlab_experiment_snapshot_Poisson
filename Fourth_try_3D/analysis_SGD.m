@@ -1,52 +1,53 @@
 analysis_note_consistency
 %%
 N = 5000
-theta_now = rand(1,4);
+theta_now = rand(1,num_parameters);
 %%
 %theta_now(2) = 6;
 %theta_now = [1.0257      6.1349           0           0]
 %theta_now = [1.2538    6.5528         0.0001         0.0001];
 %theta_now = [2, 10, 0.0001,0.0001];
 
-num_iter = 11000;
+num_iter = 20000;
 energyhistory = zeros(1, num_iter);
 thetahistory = zeros(num_iter, length(theta_now));
 thetahistory(1,:) = theta_now;
 
 display([' REal theta = ', num2str(theta)])
 eta = 0.001;
-for k = 1: num_iter
+    theta_now(2) =10;
+
+for k = know: num_iter
     tic,
     [deriv, energy] = analysis_snap_deriv_tauleap(init, theta_now, tend, ...
         deltat, sigW, timesample, snapshots, N);
     theta_now = theta_now - eta*deriv';
  %   theta_now(1) =2; 
  deriv
-    theta_now(2) =10;
     theta_now = max(theta_now, 0.0001);
     display(['iteration', num2str(k), ' complete', ' theta = ', num2str(theta_now)]);
     display(['energy = ', num2str(sum(energy))]);
     
     energyhistory(k) = sum(energy) ;
     thetahistory(k,:) = theta_now;
-    if(sum(energy) < 2/2)
+    if(sum(energy) < 1)
         eta = 0.0005;
     end
     
 %    if(sum(energy) < 1) 0.33 for good parameter set2 
-            if(sum(energy) < 0.33/2)
+            if(sum(energy) < 0.38)
 
         eta = 0.0001;
     end
     
     toc
 end
-
-
-%eee = energyhistory(1 : k);
-%ttt = thetahistory(1:k, :);
-%sss = snapshots;
-
+% 
+% 
+% eee = energyhistory(1 : k);
+% ttt = thetahistory(1:k, :);
+% sss = snapshots;
+% 
 % value1 = theta;
 % value2 = timesample; 
 % value3 = tend; 
@@ -65,5 +66,24 @@ end
 % s = struct(field1, value1,field2, value2,field3, value3,field4, value4, ...
 % field5, value5, field6, value6, field7, value7);  
 % 
-% save('good_parameters2.mat', 's')
+% save('good_parameters.mat', 's')
+% save('good_thetahistory.mat', 'ttt')
+% save('good_energyhistory.mat', 'eee')
+% save('good_snapshots.mat', 'sss')
+
+
+
+% scatter3(snapshots(1,:,plotframe), snapshots(2,:,plotframe),snapshots(3,:,plotframe))
+%     xlabel('M')
+%     ylabel('P')
+%     zlabel('D')
+% scatter(snapshots(1,:,plotframe), snapshots(2,:,plotframe))
+%     xlabel('M')
+%     ylabel('P')
+% scatter(snapshots(2,:,plotframe), snapshots(3,:,plotframe))
+%     xlabel('P')
+%     ylabel('D')
+% scatter(snapshots(1,:,plotframe), snapshots(3,:,plotframe))
+%     xlabel('M')
+%     ylabel('D')
 
